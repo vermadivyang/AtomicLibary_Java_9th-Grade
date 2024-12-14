@@ -103,7 +103,7 @@ public class Atom {
                 electronNumber = protonNumber + aCharge;
                 break;
             
-        }
+        } 
         this.element = element;
         this.mass = aMass;
         this.charge = aCharge;
