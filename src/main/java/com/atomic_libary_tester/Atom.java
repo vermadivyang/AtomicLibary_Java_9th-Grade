@@ -1,138 +1,162 @@
 package com.atomic_libary_tester;
-import java.lang.Math;
 
-public class Atom {
-    private String element;   // Element name (e.g., H, O)
-    private double mass;      // Atomic mass
-    private double charge;    // Atomic charge
-    private double isotope;    // Atomic charge
-    private double x, y, z;   // Position in 3D space
-    public int protonNumber;
-    public int nuetronNumber;
-    public int electronNumber;
+import java.util.ArrayList;
+import java.util.List;
 
-    // Constructor
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
+
+public class Atom extends Application {
+    private String element;
+    private double mass;
+    private int charge;
+    private int isotope;
+    private double x, y, z;
+    private int protonNumber;
+    private int neutronNumber;
+    private int electronNumber;
+
+    private Circle visualization; // Circle for visualization
+    private static List<Atom> atoms = new ArrayList<>(); // List to store created atoms
+
+
+    // No-argument constructor required for JavaFX
+    public Atom() {
+        // Default values (not used in visualization)
+        this.element = "";
+        this.mass = 0.0;
+        this.charge = 0;
+        this.isotope = 0;
+        this.x = 0.0;
+        this.y = 0.0;
+        this.z = 0.0;
+    }
+
+    // Constructor with parameters
     public Atom(String element, int charge, int isotope, double x, double y, double z) {
-        double aMass = 0;
-        int aCharge = 0;
-        int aIsotope = 0;
-
-        protonNumber = 0;
-        nuetronNumber = 0;
-        electronNumber = 0;
-        switch (element){
-            case "H":
-                protonNumber = 1;
-                aMass = 1.00784;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                
-                break;
-            case "He":
-                protonNumber = 2;
-                aMass = 4.002602;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "Li":
-                protonNumber = 3;
-                aMass = 6.941;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "Be":
-                protonNumber = 4;
-                aMass = 9.012;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "B":
-            protonNumber = 5;
-                aMass = 10.811;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "C":
-            protonNumber = 6;
-                aMass = 12.011;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "N":
-            protonNumber = 7;
-                aMass = 14.0067;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "O":
-            protonNumber = 8;
-                aMass = 15.999;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "F":
-            protonNumber = 9;
-                aMass = 18.998;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            case "Ne":
-            protonNumber = 10;
-                aMass = 20.1797;
-
-                if (isotope != 0){nuetronNumber = isotope; aMass = aMass + isotope;}
-                else{nuetronNumber = (int) Math.round(aMass) - protonNumber;}
-                electronNumber = protonNumber + aCharge;
-                break;
-            
-        } 
         this.element = element;
-        this.mass = aMass;
-        this.charge = aCharge;
-        this.isotope = aIsotope;
+        this.charge = charge;
+        this.isotope = isotope;
         this.x = x;
         this.y = y;
         this.z = z;
-        this.electronNumber = electronNumber;
-        this.protonNumber = protonNumber;
-        this.nuetronNumber = nuetronNumber;
+
+        initializeAtomProperties();
+        createVisualization();
+
+        atoms.add(this);
     }
 
-    // Method to display the atom's details
-    public void display() {
-        System.out.println("Element: " + element + ", Mass: " + mass + 
-                           ", Charge: " + charge + ", Position: (" + x + ", " + y + ", " + z + ")");
+    private void createVisualization() {
+        Color color = getColorForElement(element);
+        int radius = getAtomicRadiusForElement(element)/2;
+
+        // Create a Circle representing the atom
+        visualization = new Circle(this.x, this.y, radius, color);
     }
 
-    // Static method to create an Atom object
-    public static Atom createAtom(String element, int charge, int isoptope, double x, double y, double z) {
-        return new Atom(element, charge, isoptope, x, y, z);
+    private Color getColorForElement(String element) {
+        switch (element) {
+            case "H":
+                return Color.RED;
+            case "O":
+                return Color.BLUE;
+            default:
+                return Color.GRAY;
+        }
+    }
+
+    private int getAtomicRadiusForElement(String element) {
+        switch (element) {
+            case "H":
+                return 37;
+            case "O":
+                return 100;
+            default:
+                return 75;
+        }
+    }
+
+    private void initializeAtomProperties() {
+        switch (element) {
+            case "H":
+                protonNumber = 1;
+                mass = 1.00784;
+                break;
+            case "O":
+                protonNumber = 8;
+                mass = 15.999;
+                break;
+            default:
+                protonNumber = 0; // Default values for unsupported elements
+                mass = 0;
+        }
+
+        if (isotope != 0) {
+            neutronNumber = isotope - protonNumber;
+        } else {
+            neutronNumber = (int) Math.round(mass) - protonNumber;
+        }
+
+        electronNumber = protonNumber + charge;
+    }
+
+    public int getProtonNumber() {
+        return protonNumber;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public Circle getVisualization() {
+        return visualization;
+    }
+
+    public static Atom createAtom(String element, int charge, int isotope, double x, double y, double z) {
+        return new Atom(element, charge, isotope, x, y, z);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        
+
+        Pane pane = new Pane();
+
+        // Add all atom visualizations to the pane
+        for (Atom atom : atoms) {
+            pane.getChildren().add(atom.getVisualization());
+        }
+
+        for (int i = 0; i < atoms.size(); i++) {
+            for (int j = i + 1; j < atoms.size(); j++) {
+                Atom atom1 = atoms.get(i);
+                Atom atom2 = atoms.get(j);
+                Line bond = new Line(atom1.getX(), atom1.getY(), atom2.getX(), atom2.getY());
+                pane.getChildren().add(bond);
+            }
+        }
+
+        Scene scene = new Scene(pane, 600, 600);
+        stage.setTitle("Molecule Visualizer");
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static void main(String[] args) {
-        // Use the createAtom method to generate an Atom object
-        Atom hydrogen = Atom.createAtom("H", 0, 0, 0.0, 0.0, 0.0);
-        Atom oxygen = Atom.createAtom("O", 0, 0, 1.0, 1.0, 1.0);
+        new Atom("H", 0, 0, 150.0, 150.0, 0.0);
+        new Atom("O", 0, 0,200.0, 200.0, 0.0);
+        new Atom("H", 0, 0, 250.0, 150.0, 0.0);
 
-        hydrogen.display();
-        oxygen.display();
+        launch(args);
     }
 }
